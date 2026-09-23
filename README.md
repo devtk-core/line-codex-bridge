@@ -82,7 +82,7 @@ https://YOUR_HOST/webhook
 
 - `User` / `Group`: Codexにログイン済みのユーザー
 - `WorkingDirectory`: このリポジトリの配置先
-- `ReadWritePaths`: `CODEX_WORKDIR` と同じパス
+- `ReadWritePaths`: `CODEX_WORKDIR` とCodex利用ユーザーの `~/.codex`
 - `CODEX_BIN`: `/etc/codex-line.env` 側の実際のCodexパス
 
 その後:

@@ -14,12 +14,13 @@ ExecStart=/usr/bin/python3 -m codex_line.server
 Restart=on-failure
 RestartSec=5
 
-# Service hardening. ReadWritePaths must include CODEX_WORKDIR.
+# Service hardening. ReadWritePaths must include CODEX_WORKDIR and the
+# authenticated user's Codex state directory.
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=/srv/codex-workspace
+ReadWritePaths=/srv/codex-workspace /home/pi/.codex
 
 [Install]
 WantedBy=multi-user.target

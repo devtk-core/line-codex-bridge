@@ -104,6 +104,16 @@ journalctl -u codex-line -f
 
 各LINEメッセージは独立した一回のCodex実行です。会話履歴の継続、承認フロー、複数リポジトリ切替は初版には含めていません。
 
+## Optional: domain-free Quick Tunnel
+
+`cloudflared` のQuick Tunnelを使うと、独自ドメインなしで一時的な公開HTTPS URLを取得できます。`codex_line.quick_tunnel` はURLが変わるたびにLINE Webhookを自動更新します。
+
+```bash
+python3 -m codex_line.quick_tunnel
+```
+
+常駐例は `deploy/codex-line-quick-tunnel.service` を参照してください。Quick TunnelはCloudflare公式でも開発・テスト用途とされ、URLはプロセス再起動ごとに変わり、稼働率保証はありません。
+
 ## License
 
 [MIT License](LICENSE)

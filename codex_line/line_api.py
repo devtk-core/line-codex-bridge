@@ -43,23 +43,55 @@ class LineClient:
             {"to": destination, "messages": [self._text_message(text)]},
         )
 
+    def set_webhook_endpoint(self, endpoint: str) -> dict[str, object]:
+        return self._request_json(
+            f"{LINE_API_BASE.rsplit('/message', 1)[0]}/channel/webhook/endpoint",
+            method="PUT",
+            payload={"endpoint": endpoint},
+        )
+
+    def test_webhook_endpoint(self) -> dict[str, object]:
+        return self._request_json(
+            f"{LINE_API_BASE.rsplit('/message', 1)[0]}/channel/webhook/test",
+            method="POST",
+            payload={},
+        )
+
+    def get_webhook_endpoint(self) -> dict[str, object]:
+        return self._request_json(
+            f"{LINE_API_BASE.rsplit('/message', 1)[0]}/channel/webhook/endpoint",
+            method="GET",
+        )
+
     @staticmethod
     def _text_message(text: str) -> dict[str, str]:
         return {"type": "text", "text": truncate_text(text)}
 
     def _post(self, url: str, payload: dict[str, object]) -> None:
+        self._request_json(url, method="POST", payload=payload)
+
+    def _request_json(
+        self,
+        url: str,
+        method: str,
+        payload: dict[str, object] | None = None,
+    ) -> dict[str, object]:
+        data = None
+        if payload is not None:
+            data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         request = urllib.request.Request(
             url,
-            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            data=data,
             headers={
                 "Authorization": f"Bearer {self._access_token}",
                 "Content-Type": "application/json",
             },
-            method="POST",
+            method=method,
         )
         try:
-            with urllib.request.urlopen(request, timeout=self._timeout_seconds):
-                return
+            with urllib.request.urlopen(request, timeout=self._timeout_seconds) as response:
+                body = response.read().decode("utf-8")
+                return json.loads(body) if body else {}
         except urllib.error.HTTPError as exc:
             detail = exc.read(2048).decode("utf-8", errors="replace")
             raise RuntimeError(f"LINE API returned HTTP {exc.code}: {detail}") from exc

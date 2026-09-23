@@ -13,6 +13,7 @@ from codex_line.config import Config
 from codex_line.line_api import truncate_text, verify_signature
 from codex_line.runner import CodexRunner
 from codex_line.server import Bridge
+from codex_line.quick_tunnel import extract_quick_tunnel_url
 
 
 class SignatureTests(unittest.TestCase):
@@ -28,6 +29,14 @@ class SignatureTests(unittest.TestCase):
     def test_truncate_text(self) -> None:
         self.assertEqual(truncate_text("abc", 10), "abc")
         self.assertLessEqual(len(truncate_text("x" * 100, 50)), 50)
+
+    def test_extract_quick_tunnel_url(self) -> None:
+        line = "INF Your quick Tunnel has been created! Visit https://one-two.trycloudflare.com"
+        self.assertEqual(
+            extract_quick_tunnel_url(line),
+            "https://one-two.trycloudflare.com",
+        )
+        self.assertIsNone(extract_quick_tunnel_url("no URL yet"))
 
 
 class ConfigTests(unittest.TestCase):

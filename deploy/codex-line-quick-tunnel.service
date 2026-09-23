@@ -1,0 +1,25 @@
+[Unit]
+Description=Cloudflare Quick Tunnel for LINE to Codex bridge
+Requires=codex-line.service
+After=network-online.target codex-line.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Change this to the Linux user that runs codex-line.service.
+User=pi
+Group=pi
+WorkingDirectory=/opt/codex-line
+EnvironmentFile=/etc/codex-line.env
+Environment=CLOUDFLARED_BIN=/usr/bin/cloudflared
+ExecStart=/usr/bin/python3 -m codex_line.quick_tunnel
+Restart=on-failure
+RestartSec=10
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target
